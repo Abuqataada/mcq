@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI MCQ Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4caf50;
+      --danger-color: #f72585;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding-top: 2rem;
+      transition: background-color 0.3s, color 0.3s;
+      line-height: 1.6;
+    }
+
+    /* MathJax Specific Styles */
+    .MathJax_Display {
+      overflow-x: auto;
+      padding: 0.5rem 0;
+    }
+
+    body.dark-mode .mjx-chtml {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
+    @media (max-width: 768px) {
+      .MathJax_Display {
+        font-size: 0.9em !important;
+      }
+    }
+
+    .container {
+      max-width: 800px;
+      padding-bottom: 100px;
+    }
+
+    /* Header */
+    .app-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .app-title {
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .app-description {
+      color: #6c757d;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Form */
+    .form-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: none;
+      transition: var(--transition);
+    }
+
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e0e0e0;
+      transition: var(--transition);
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #3d8b40;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+      background-color: #d91a6d;
+      transform: translateY(-2px);
+    }
+
+    .btn-action-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Output */
+    .output-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2rem;
+      margin-top: 2rem;
+      border-left: 4px solid var(--primary-color);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .output-container.reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .output-content {
+      white-space: pre-wrap;
+      font-family: 'Roboto Mono', monospace;
+      line-height: 1.8;
+      color: var(--dark-color);
+    }
+
+    /* Sessions */
+    .sessions-container {
+      margin-top: 3rem;
+    }
+
+    .sessions-title {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .session-item {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      cursor: pointer;
+      border-left: 3px solid var(--accent-color);
+    }
+
+    .session-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .session-title {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .session-meta {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-bottom: 0.5rem;
+    }
+
+    .session-topics {
+      font-size: 0.9rem;
+      color: #495057;
+      margin-bottom: 0;
+    }
+
+    .session-delete {
+      color: var(--danger-color);
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 0.25rem;
+    }
+
+    .session-delete:hover {
+      transform: scale(1.2);
+    }
+
+    /* Controls */
+    .app-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .language-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-switch .form-check-input {
+      width: 3em;
+      height: 1.5em;
+      cursor: pointer;
+    }
+
+    /* Spinner */
+    .spinner-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .spinner-text {
+      margin-top: 1rem;
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    /* Footer */
+    .app-footer {
+      background: var(--dark-color);
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+    }
+
+    .app-footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .form-container,
+    body.dark-mode .output-container,
+    body.dark-mode .session-item {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    body.dark-mode .form-label,
+    body.dark-mode .session-title,
+    body.dark-mode .output-content {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .form-control,
+    body.dark-mode .form-select,
+    body.dark-mode .session-meta,
+    body.dark-mode .session-topics {
+      background-color: #2d2d2d;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .app-description {
+      color: #a0a0a0;
+    }
+
+    body.dark-mode .app-footer {
+      background-color: #1a1a1a;
+      color: #ccc;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem 100px;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .btn-action-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .app-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="app-header">
+    <h1 class="app-title">
+      <i class="fas fa-brain"></i> AI MCQ Generator
+    </h1>
+    <p class="app-description">
+      AI-Powered MCQ Generator: Create Custom Assessments in Seconds
+    </p>
+  </header>
+
+  <div class="app-controls">
+    <div class="language-selector">
+      <i class="fas fa-globe"></i>
+      <select id="langSelect" class="form-select">
+        <option value="en">English</option>
+        <option value="fr">French</option>
+        <option value="ha">Hausa</option>
+        <option value="ig">Igbo</option>
+        <option value="yo">Yoruba</option>
+      </select>
+    </div>
+    <div class="theme-toggle">
+      <i class="fas fa-moon"></i>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="darkModeSwitch" />
+      </div>
+    </div>
+  </div>
+
+  <form id="mcqForm" class="form-container fade-in">
+    <div class="mb-4">
+      <label for="classLevel" class="form-label" data-i18n="class">
+        <i class="fas fa-graduation-cap me-2"></i>Class *
+      </label>
+      <input type="text" id="classLevel" name="classLevel" class="form-control" required />
+    </div>
+    
+    <div class="mb-4">
+      <label for="subject" class="form-label" data-i18n="subject">
+        <i class="fas fa-book me-2"></i>Subject *
+      </label>
+      <input type="text" id="subject" name="subject" class="form-control" required />
+    </div>
+    
+    <div class="mb-4">
+      <label for="topics" class="form-label" data-i18n="topics">
+        <i class="fas fa-tags me-2"></i>Topics *
+      </label>
+      <textarea id="topics" name="topics" class="form-control" placeholder="Separate topics with commas" required></textarea>
+    </div>
+    
+    <div class="mb-4">
+      <label for="notes" class="form-label" data-i18n="notes">
+        <i class="fas fa-sticky-note me-2"></i>Class Notes (Optional)
+      </label>
+      <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+    </div>
+    
+    <div class="mb-4">
+      <label for="numQuestions" class="form-label" data-i18n="numQuestions">
+        <i class="fas fa-list-ol me-2"></i>Number of Questions *
+      </label>
+      <input type="number" id="numQuestions" name="numQuestions" class="form-control" min="1" max="50" value="10" required />
+    </div>
+    
+    <div class="mb-4">
+      <label for="bloom" class="form-label" data-i18n="bloom">
+        <i class="fas fa-layer-group me-2"></i>Bloom's Level
+      </label>
+      <select id="bloom" name="bloom" class="form-select">
+        <option value="Knowledge, Comprehension, Application, Analysis">Level1 – Level4</option>
+        <option value="All levels" selected>All Levels</option>
+        <option value="Knowledge only">Knowledge Only</option>
+      </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary" data-i18n="generate">
+      <i class="fas fa-magic me-2"></i>Generate Questions
+    </button>
+  </form>
+
+  <div id="spinner" class="spinner-container d-none">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="spinner-text">Generating your questions...</p>
+  </div>
+
+  <div id="output" class="output-container d-none">
+  <div id="outputContent" class="output-content"></div>
+  <div class="btn-action-group">
+    <button class="btn btn-secondary" id="copyBtn" data-i18n="copy">
+      <i class="fas fa-copy me-2"></i>Copy
+    </button>
+    <button class="btn btn-success" id="downloadBtn" data-i18n="download">
+      <i class="fas fa-file-word me-2"></i>Download as Word
+    </button>
+  </div>
+</div>
+
+  <div class="sessions-container">
+    <h3 class="sessions-title">
+      <i class="fas fa-history"></i> Previous Sessions
+    </h3>
+    <div id="sessionList" class="session-list"></div>
+  </div>
+</div>
+
+<footer class="app-footer">
+  &copy; <span id="year"></span> ADI – MCQ Generator | Built with <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+</footer>
+
+<script>
+    // Set footer year
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Dark mode persistence
+const darkSwitch = document.getElementById('darkModeSwitch');
+if (localStorage.getItem('darkMode') === 'enabled') {
+  document.body.classList.add('dark-mode');
+  darkSwitch.checked = true;
+}
+
+darkSwitch.addEventListener('change', () => {
+  document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
+});
+
+// Enhanced Spinner + AI Handler
+document.getElementById('mcqForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const form = new FormData(this);
+  const cls = form.get("classLevel");
+  const subject = form.get("subject");
+  const topics = form.get("topics");
+  const notes = form.get("notes");
+  const num = form.get("numQuestions");
+  const bloom = form.get("bloom");
+
+  const prompt = `
+You are an expert educator tasked with setting high-quality multiple choice questions (MCQs) for academic assessment purposes.
+
+Generate exactly ${num} multiple choice questions for the subject: ${subject}, targeted at students in class: ${cls}.
+
+- Focus the questions on the following topic(s): ${topics}.
+- Apply principles of Bloom's Taxonomy at the level(s): ${bloom}.
+- If notes are provided, incorporate relevant context from the following reference material:
+${notes ? notes : "N/A"}
+
+Formatting Guidelines:
+- Each question must have four options (A-D).
+- Clearly indicate the correct option by appending three spaces followed by an asterisk (   *) at the end of the correct answer.
+- Use LaTeX for math expressions: \\(x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}\\)
+- Return only the list of questions and their options in plain text format.`;
+
+  const out = document.getElementById('output');
+  const outContent = document.getElementById('outputContent');
+  const spinner = document.getElementById('spinner');
+  
+  // Reset UI
+   // Reset UI
+        out.classList.add("d-none");
+        spinner.classList.remove("d-none");
+        outContent.innerHTML = '';
+
+        try {
+            const response = await puter.ai.chat(prompt);
+            const result = response.message?.content || response;
+            
+            // Process and display results
+            outContent.innerHTML = result
+                .replace(/\n/g, '<br>')
+                .replace(/([A-D]\))/g, '<strong>$1</strong>');
+            
+            // Animation and rendering
+            out.classList.remove("d-none", "reveal");
+            void out.offsetWidth;
+            out.classList.add("reveal");
+            
+            // Render MathJax if present (using default configuration)
+            if (window.MathJax && (result.includes('\\(') || result.includes('\\['))) {
+                MathJax.typesetPromise([outContent]).catch(err => console.log('MathJax error:', err));
+            }
+  
+    // Save session
+    await saveSession({
+      timestamp: new Date().toISOString(),
+      class: cls,
+      subject,
+      topics,
+      questions: result
+    });
+    
+    // Refresh session list
+    loadSessions();
+    
+  } catch (err) {
+    outContent.innerHTML = "❌ Error generating questions: " + (err.message || 'Unknown error');
+    out.classList.remove("d-none");
+  } finally {
+    spinner.classList.add("d-none");
+  }
+});
+
+// Copy to clipboard
+document.getElementById('copyBtn').addEventListener('click', function () {
+  const text = document.getElementById('outputContent').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const originalText = this.innerHTML;
+    this.innerHTML = '<i class="fas fa-check me-2"></i>Questions Copied!';
+    setTimeout(() => {
+      this.innerHTML = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Copy failed:', err);
+    this.innerHTML = '<i class="fas fa-times me-2"></i>Copy Failed';
+    setTimeout(() => {
+      this.innerHTML = originalText;
+    }, 2000);
+  });
+});
+
+// Download
+document.getElementById('downloadBtn').addEventListener('click', function () {
+  const text = document.getElementById('outputContent').innerText;
+  const blob = new Blob([text], { type: "application/msword" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "MCQs_" + new Date().toISOString().slice(0, 10) + ".doc";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+// Translation system
+const translations = {
+  class: { en: "Class", fr: "Classe", ha: "Ajin", ig: "Kọlụs", yo: "Kíláàsì" },
+  subject: { en: "Subject", fr: "Sujet", ha: "Darasi", ig: "Isiokwu", yo: "Kókó" },
+  topics: { en: "Topics", fr: "Sujets", ha: "Batutu", ig: "Isiokwu", yo: "Kókó" },
+  notes: { en: "Class Notes (Optional)", fr: "Notes de cours", ha: "Bayanan azuzuwa", ig: "Nkọwa klaasị", yo: "Àkọlé Kíláàsì" },
+  numQuestions: { en: "Number of Questions", fr: "Nombre de questions", ha: "Yawan tambayoyi", ig: "Ọnụ ajụjụ", yo: "Ìbéèrè" },
+  bloom: { en: "Bloom's Level", fr: "Niveau de Bloom", ha: "Matakin Bloom", ig: "Ọkwa Bloom", yo: "Ipele Bloom" },
+  generate: { en: "Generate Questions", fr: "Générer", ha: "Ƙirƙira", ig: "Mepụta", yo: "Ṣẹdá" },
+  copy: { en: "Copy", fr: "Copier", ha: "Kwafi", ig: "Detuo", yo: "Daakọ" },
+  download: { en: "Download as docx", fr: "Télécharger", ha: "Sauke", ig: "Budata", yo: "Gba" }
+};
+
+document.getElementById('langSelect').addEventListener('change', function () {
+  const lang = this.value;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[key] && translations[key][lang]) {
+      el.textContent = translations[key][lang];
+    }
+  });
+});
+
+// IndexedDB logic
+const DB_NAME = "mcq_chat_sessions";
+const STORE_NAME = "sessions";
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id", autoIncrement: true });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveSession(session) {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  tx.objectStore(STORE_NAME).add(session);
+  return tx.complete;
+}
+
+async function getAllSessions() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function deleteSession(id) {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  tx.objectStore(STORE_NAME).delete(id);
+  await tx.complete;
+  loadSessions();
+}
+
+// Modified loadSessions to handle MathJax for history items
+    async function loadSessions() {
+        const sessions = await getAllSessions();
+        const list = document.getElementById('sessionList');
+        list.innerHTML = "";
+        
+        if (sessions.length === 0) {
+            list.innerHTML = `
+                <div class="session-item">
+                    <p class="text-muted mb-0">No previous sessions found</p>
+                </div>
+            `;
+            return;
+        }
+        
+        sessions.reverse().forEach(s => {
+            const item = document.createElement('div');
+            item.className = "session-item fade-in";
+            item.innerHTML = `
+                <div class="session-header">
+                    <h4 class="session-title">${s.subject}</h4>
+                    <button class="session-delete" onclick="event.stopPropagation(); deleteSession(${s.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="session-meta">
+                    <span>Class: ${s.class}</span> • 
+                    <span>${new Date(s.timestamp).toLocaleString()}</span>
+                </div>
+                <p class="session-topics">Topics: ${s.topics}</p>
+            `;
+            item.addEventListener('click', () => {
+                const out = document.getElementById('output');
+                const outContent = document.getElementById('outputContent');
+                outContent.innerHTML = s.questions
+                    .replace(/\n/g, '<br>')
+                    .replace(/([A-D]\))/g, '<strong>$1</strong>');
+                out.classList.remove('d-none', 'reveal');
+                void out.offsetWidth;
+                out.classList.add('reveal');
+                
+                // Render MathJax for historical items if needed
+                if (window.MathJax && (s.questions.includes('\\(') || s.questions.includes('\\['))) {
+                    MathJax.typesetPromise([outContent]).catch(err => console.log('MathJax error:', err));
+                }
+                
+                out.scrollIntoView({ behavior: 'smooth' });
+            });
+            list.appendChild(item);
+        });
+    }
+
+// Make deleteSession available globally
+window.deleteSession = deleteSession;
+
+// Initialize
+loadSessions();
+</script>
+</body>
+</html>
