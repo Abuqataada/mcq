@@ -393,7 +393,7 @@
 <div class="container">
   <header class="app-header">
     <h1 class="app-title">
-      <i class="fas fa-brain"></i> AI MCQ Generator
+      <i class="fas fa-brain"></i> MCQGen AI
     </h1>
     <p class="app-description">
       AI-Powered MCQ Generator: Create Custom Assessments in Seconds
@@ -629,15 +629,15 @@ document.getElementById('downloadBtn').addEventListener('click', function () {
 
 // Translation system
 const translations = {
-  class: { en: 'Class <b style="color: red;">*</b>', fr: "Classe", ha: "Ajin", ig: "Kọlụs", yo: "Kíláàsì" },
-  subject: { en: 'Subject <b style="color: red;">*</b>', fr: "Sujet", ha: "Darasi", ig: "Isiokwu", yo: "Kókó" },
-  topics: { en: 'Topics <b style="color: red;">*</b>', fr: "Sujets", ha: "Batutu", ig: "Isiokwu", yo: "Kókó" },
-  notes: { en: "Class Notes (Optional)", fr: "Notes de cours", ha: "Bayanan azuzuwa", ig: "Nkọwa klaasị", yo: "Àkọlé Kíláàsì" },
-  numQuestions: { en: 'Number of Questions <b style="color: red;">*</b>', fr: "Nombre de questions", ha: "Yawan tambayoyi", ig: "Ọnụ ajụjụ", yo: "Ìbéèrè" },
-  bloom: { en: 'Bloom\'s Level <b style="color: red;">*</b>', fr: "Niveau de Bloom", ha: "Matakin Bloom", ig: "Ọkwa Bloom", yo: "Ipele Bloom" },
+  class: { en: 'Class *', fr: "Classe *", ha: "Ajin *", ig: "Kọlụs *", yo: "Kíláàsì *" },
+  subject: { en: 'Subject *', fr: "Sujet *", ha: "Darasi *", ig: "Isiokwu *", yo: "Kókó *" },
+  topics: { en: 'Topics *', fr: "Sujets *", ha: "Batutu *", ig: "Isiokwu *", yo: "Kókó *" },
+  notes: { en: "Class Notes (Optional)", fr: "Notes de cours (Optional)", ha: "Bayanan azuzuwa (Optional)", ig: "Nkọwa klaasị (Optional)", yo: "Àkọlé Kíláàsì (Optional)" },
+  numQuestions: { en: 'Number of Questions *', fr: "Nombre de questions *", ha: "Yawan tambayoyi *", ig: "Ọnụ ajụjụ *", yo: "Ìbéèrè *" },
+  bloom: { en: "Bloom's Level *", fr: "Niveau de Bloom *", ha: "Matakin Bloom *", ig: "Ọkwa Bloom *", yo: "Ipele Bloom *" },
   generate: { en: "Generate Questions", fr: "Générer", ha: "Ƙirƙira", ig: "Mepụta", yo: "Ṣẹdá" },
   copy: { en: "Copy", fr: "Copier", ha: "Kwafi", ig: "Detuo", yo: "Daakọ" },
-  download: { en: "Download as docx", fr: "Télécharger", ha: "Sauke", ig: "Budata", yo: "Gba" }
+  download: { en: "Download as docx", fr: "Télécharger as docx", ha: "Sauke as docx", ig: "Budata as docx", yo: "Gba as docx" }
 };
 
 document.getElementById('langSelect').addEventListener('change', function () {
