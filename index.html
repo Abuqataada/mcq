@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AI MCQ Generator</title>
+  <title>AI Questions Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://js.puter.com/v2/"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -461,7 +461,7 @@
       </label>
       <select id="bloom" name="bloom" class="form-select">
         <option value="Knowledge, Comprehension, Application, Analysis">Level1 – Level4</option>
-        <option value="All levels" selected>All Levels</option>
+        <option value="Knowledge, Comprehension, Application, Analysis, Evaluation, Creation" selected>All Levels</option>
         <option value="Knowledge only">Knowledge Only</option>
       </select>
     </div>
@@ -538,9 +538,12 @@ Generate exactly ${num} multiple choice questions for the subject: ${subject}, t
 - Apply principles of Bloom's Taxonomy at the level(s): ${bloom}.
 - If notes are provided, incorporate relevant context from the following reference material:
 ${notes ? notes : "N/A"}
+- Then create 10 short answer essay questions based on the topics and 
+of the class as Section B.
 
 Formatting Guidelines:
 - Each question must have four options (A-D).
+- You must always randomize the correct options at all time.
 - Clearly indicate the correct option by appending three spaces followed by an asterisk (   *) at the end of the correct answer.
 - Use LaTeX for math expressions: \\(x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}\\)
 - Return only the list of questions and their options in plain text format.`;
@@ -626,12 +629,12 @@ document.getElementById('downloadBtn').addEventListener('click', function () {
 
 // Translation system
 const translations = {
-  class: { en: "Class", fr: "Classe", ha: "Ajin", ig: "Kọlụs", yo: "Kíláàsì" },
-  subject: { en: "Subject", fr: "Sujet", ha: "Darasi", ig: "Isiokwu", yo: "Kókó" },
-  topics: { en: "Topics", fr: "Sujets", ha: "Batutu", ig: "Isiokwu", yo: "Kókó" },
+  class: { en: 'Class <b style="color: red;">*</b>', fr: "Classe", ha: "Ajin", ig: "Kọlụs", yo: "Kíláàsì" },
+  subject: { en: 'Subject <b style="color: red;">*</b>', fr: "Sujet", ha: "Darasi", ig: "Isiokwu", yo: "Kókó" },
+  topics: { en: 'Topics <b style="color: red;">*</b>', fr: "Sujets", ha: "Batutu", ig: "Isiokwu", yo: "Kókó" },
   notes: { en: "Class Notes (Optional)", fr: "Notes de cours", ha: "Bayanan azuzuwa", ig: "Nkọwa klaasị", yo: "Àkọlé Kíláàsì" },
-  numQuestions: { en: "Number of Questions", fr: "Nombre de questions", ha: "Yawan tambayoyi", ig: "Ọnụ ajụjụ", yo: "Ìbéèrè" },
-  bloom: { en: "Bloom's Level", fr: "Niveau de Bloom", ha: "Matakin Bloom", ig: "Ọkwa Bloom", yo: "Ipele Bloom" },
+  numQuestions: { en: 'Number of Questions <b style="color: red;">*</b>', fr: "Nombre de questions", ha: "Yawan tambayoyi", ig: "Ọnụ ajụjụ", yo: "Ìbéèrè" },
+  bloom: { en: 'Bloom\'s Level <b style="color: red;">*</b>', fr: "Niveau de Bloom", ha: "Matakin Bloom", ig: "Ọkwa Bloom", yo: "Ipele Bloom" },
   generate: { en: "Generate Questions", fr: "Générer", ha: "Ƙirƙira", ig: "Mepụta", yo: "Ṣẹdá" },
   copy: { en: "Copy", fr: "Copier", ha: "Kwafi", ig: "Detuo", yo: "Daakọ" },
   download: { en: "Download as docx", fr: "Télécharger", ha: "Sauke", ig: "Budata", yo: "Gba" }
