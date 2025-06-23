@@ -422,21 +422,21 @@
   <form id="mcqForm" class="form-container fade-in">
     <div class="mb-4">
       <label for="classLevel" class="form-label" data-i18n="class">
-        <i class="fas fa-graduation-cap me-2"></i>Class *
+        <i class="fas fa-graduation-cap me-2"></i>Class <b style="color: red;">*</b>
       </label>
       <input type="text" id="classLevel" name="classLevel" class="form-control" required />
     </div>
     
     <div class="mb-4">
       <label for="subject" class="form-label" data-i18n="subject">
-        <i class="fas fa-book me-2"></i>Subject *
+        <i class="fas fa-book me-2"></i>Subject <b style="color: red;">*</b>
       </label>
       <input type="text" id="subject" name="subject" class="form-control" required />
     </div>
     
     <div class="mb-4">
       <label for="topics" class="form-label" data-i18n="topics">
-        <i class="fas fa-tags me-2"></i>Topics *
+        <i class="fas fa-tags me-2"></i>Topics <b style="color: red;">*</b>
       </label>
       <textarea id="topics" name="topics" class="form-control" placeholder="Separate topics with commas" required></textarea>
     </div>
@@ -450,14 +450,14 @@
     
     <div class="mb-4">
       <label for="numQuestions" class="form-label" data-i18n="numQuestions">
-        <i class="fas fa-list-ol me-2"></i>Number of Questions *
+        <i class="fas fa-list-ol me-2"></i>Number of Questions <b style="color: red;">*</b>
       </label>
       <input type="number" id="numQuestions" name="numQuestions" class="form-control" min="1" max="50" value="10" required />
     </div>
     
     <div class="mb-4">
       <label for="bloom" class="form-label" data-i18n="bloom">
-        <i class="fas fa-layer-group me-2"></i>Bloom's Level
+        <i class="fas fa-layer-group me-2"></i>Bloom's Level <b style="color: red;">*</b>
       </label>
       <select id="bloom" name="bloom" class="form-select">
         <option value="Knowledge, Comprehension, Application, Analysis">Level1 – Level4</option>
