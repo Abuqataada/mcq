@@ -641,6 +641,7 @@ document.getElementById('copyBtn').addEventListener('click', function() {
   }
 });
 
+// Download the questions content
 document.getElementById('downloadBtn').addEventListener('click', function() {
   const outputContent = document.getElementById('outputContent');
   const button = this;
@@ -651,8 +652,21 @@ document.getElementById('downloadBtn').addEventListener('click', function() {
     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Preparing TXT...';
     button.disabled = true;
 
-    // Get the text content (without HTML tags)
-    const textContent = outputContent.innerText;
+    // Get the text content and clean it up
+    let textContent = outputContent.innerText;
+    
+    // Clean up excessive newlines and formatting
+    textContent = textContent
+      // Remove extra newlines between questions
+      .replace(/\n{3,}/g, '\n\n')
+      // Fix spacing around asterisks (correct answers)
+      .replace(/\s*\*\s*/g, '* ')
+      // Fix spacing around operators in equations
+      .replace(/(\d)\s+([+\-×÷=])\s+(\d)/g, '$1$2$3')
+      // Remove newlines in the middle of equations
+      .replace(/(\w)\n(\w)/g, '$1$2')
+      // Ensure consistent spacing after question numbers
+      .replace(/(\d+)\.\s*/g, '$1. ');
     
     // Create text file blob
     const blob = new Blob([textContent], { type: 'text/plain' });
