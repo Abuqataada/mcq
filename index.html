@@ -641,47 +641,27 @@ document.getElementById('copyBtn').addEventListener('click', function() {
   }
 });
 
-// Enhanced Download Function (DOCX format)
-document.getElementById('downloadBtn').addEventListener('click', async function() {
+document.getElementById('downloadBtn').addEventListener('click', function() {
   const outputContent = document.getElementById('outputContent');
   const button = this;
   const originalText = button.innerHTML;
 
   try {
     // Show downloading state
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Preparing DOCX...';
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Preparing TXT...';
     button.disabled = true;
 
-    // Get the HTML content with MathJax rendered output
-    const htmlContent = outputContent.innerHTML;
-
-    // Create a DOCX file using docx.js library
-    const { Document, Paragraph, TextRun, HeadingLevel, Packer } = docx;
-
-    // Convert HTML to DOCX paragraphs
-    const doc = new Document({
-      sections: [{
-        properties: {},
-        children: htmlContent.split('<br>').map(segment => {
-          // Handle math expressions (they appear as plain text in the HTML)
-          const text = segment.replace(/<[^>]*>/g, ''); // Strip HTML tags but keep text
-          return new Paragraph({
-            children: [new TextRun(text)],
-            spacing: { after: 100 }
-          });
-        })
-      }]
-    });
-
-    // Generate the DOCX file
-    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    const blob = await Packer.toBlob(doc);
+    // Get the text content (without HTML tags)
+    const textContent = outputContent.innerText;
+    
+    // Create text file blob
+    const blob = new Blob([textContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
     
     // Create download link
-    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `MCQs_${new Date().toISOString().slice(0, 10)}.docx`;
+    link.download = `MCQs_${new Date().toISOString().slice(0, 10)}.txt`;
     
     // Trigger download
     document.body.appendChild(link);
@@ -699,22 +679,12 @@ document.getElementById('downloadBtn').addEventListener('click', async function(
     }, 2000);
 
   } catch (error) {
-    console.error('DOCX generation failed:', error);
+    console.error('Download failed:', error);
     button.innerHTML = '<i class="fas fa-times me-2"></i>Failed!';
     setTimeout(() => {
       button.innerHTML = originalText;
       button.disabled = false;
     }, 2000);
-    
-    // Fallback to simple text download if DOCX fails
-    const text = outputContent.innerText;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `MCQs_${new Date().toISOString().slice(0, 10)}.txt`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 100);
   }
 });
   
